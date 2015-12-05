@@ -98,12 +98,18 @@ func ColorSeqBold(color color) string {
 	return fmt.Sprintf("\033[%d;1m", int(color))
 }
 
-func doFmtVerbLevelColor(layout string, level Level, output io.Writer) {
-	if layout == "bold" {
-		output.Write([]byte(boldcolors[level]))
-	} else if layout == "reset" {
+// colorToBold makes an ansi color string bold by adding ;1 before the m
+func colorToBold(color string) string {
+	return strings.Replace(color, "m", ";1m", 1)
+}
+
+func doFmtVerbLevelColor(layout string, col string, output io.Writer) {
+	if layout == "reset" {
 		output.Write([]byte("\033[0m"))
-	} else {
-		output.Write([]byte(colors[level]))
+		return
 	}
+	if layout == "bold" {
+		col = colorToBold(col)
+	}
+	output.Write([]byte(col))
 }
